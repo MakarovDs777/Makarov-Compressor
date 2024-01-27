@@ -26,21 +26,6 @@ def get_text_from_symbol_and_index_arrays(symbols, indexes):
         for index in symbol_indexes:
             result[index] = symbol
     print(''.join(result))
-
-def convert_and_merge(symbols, indexes):
-    # Преобразуем символы в их значения Unicode
-    unicode_symbols = [ord(symbol) for symbol in symbols]
-
-    # Находим максимальное значение в массиве индексов
-    max_index = max(max(sublist) for sublist in indexes) + 1
-
-    # Объединяем все списки в один с использованием max_index как разделителя
-    merged_list = unicode_symbols
-    for sublist in indexes:
-        merged_list.append(max_index)
-        merged_list.extend(sublist)
-
-    return merged_list
     
 symbols, indexes = get_indexes(text)
 #print(symbols, indexes)
