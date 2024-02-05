@@ -1,3 +1,4 @@
+
 import tkinter as tk
 from tkinter import ttk, Menu
 from tkinter.messagebox import showinfo
@@ -48,6 +49,10 @@ class MenuBar(tk.Menu):
         # Создайте новое окно для генерации текста
         self.new_window = tk.Toplevel(self)
         self.new_window.title("Генерировать текст")
+        self.new_window.geometry("350x250")
+
+        p22 = tk.PhotoImage(file='Compressor.png')
+        self.new_window.iconphoto(False, p22)
 
         # Создание полей ввода
         self.r_label = ttk.Label(self.new_window, text="r:")
@@ -91,7 +96,11 @@ class MenuBar(tk.Menu):
     def create_key(self):
         # Создайте новое окно для создания ключа
         self.new_window = tk.Toplevel(self)
-        self.new_window.title("Create Key")
+        self.new_window.title("Создание ключа")
+        self.new_window.geometry("350x250")
+
+        p11 = tk.PhotoImage(file='Compressor.png')
+        self.new_window.iconphoto(False, p11)
 
         # Создать поле ввода файла
         self.file_label = ttk.Label(self.new_window, text="Выберите файл:")
@@ -100,7 +109,7 @@ class MenuBar(tk.Menu):
         self.file_entry.pack()
 
         # Создать кнопку отправки
-        self.submit_button = ttk.Button(self.new_window, text="Submit", command=self.create_key_from_file)
+        self.submit_button = ttk.Button(self.new_window, text="Отправить", command=self.create_key_from_file)
         self.submit_button.pack()
 
     def create_key_from_file(self):
