@@ -71,7 +71,7 @@ class MenuBar(tk.Menu):
         self.fig_entry.pack()
 
         # Создать кнопку отправки
-        self.submit_button = ttk.Button(self.new_window, text="Submit", command=self.generate_text_file)
+        self.submit_button = ttk.Button(self.new_window, text="Отправить", command=self.generate_text_file)
         self.submit_button.pack()
 
     def generate_text_file(self):
