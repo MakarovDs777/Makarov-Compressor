@@ -168,14 +168,14 @@ from itertools import chain
 from ast import literal_eval
 
 root = tk.Tk()
-root.title("Text Processing")
+root.title("Makarov Compressor")
 root.geometry("650x900")
-
+root.iconbitmap("F:\EVP-Spaces\PDFextract_text-main\PDFextract_text-main\starterFiles\logo.png")
 canvas = tk.Canvas(root, width=600, height=300)
 canvas.grid(columnspan=3, rowspan=3)
 
 # logo
-logo = Image.open('logo.png')
+logo = Image.open('F:\EVP-Spaces\PDFextract_text-main\PDFextract_text-main\starterFiles\logo.png')
 logo = ImageTk.PhotoImage(logo)
 logo_label = tk.Label(image=logo)
 logo_label.image = logo
