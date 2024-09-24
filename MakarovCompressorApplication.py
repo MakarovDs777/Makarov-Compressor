@@ -1,4 +1,4 @@
-
+'''
 import tkinter as tk
 from tkinter import ttk, Menu
 from tkinter.messagebox import showinfo
@@ -156,4 +156,146 @@ def create_geometric_shape(numbers):
 if __name__ == "__main__":
     app = App()
     app.mainloop()
-    exit(0)
+    exit(0)'''
+import tkinter as tk
+import PyPDF2
+import os
+from PIL import Image, ImageTk
+from tkinter.filedialog import askopenfile, asksaveasfile
+import numpy as np
+import matplotlib.pyplot as plt
+from itertools import chain
+from ast import literal_eval
+
+root = tk.Tk()
+root.title("Text Processing")
+root.geometry("650x900")
+
+canvas = tk.Canvas(root, width=600, height=300)
+canvas.grid(columnspan=3, rowspan=3)
+
+# logo
+logo = Image.open('logo.png')
+logo = ImageTk.PhotoImage(logo)
+logo_label = tk.Label(image=logo)
+logo_label.image = logo
+logo_label.grid(column=1, row=0)
+
+# instructions
+instructions = tk.Label(root, text="Выберите текстовый файл на вашем компьютере для обработки", font="Raleway")
+instructions.grid(columnspan=3, column=0, row=1)
+
+def open_file():
+    browse_text.set("loading...")
+    file = askopenfile(parent=root, mode='r', title="Choose a file", filetypes=[("Text file", "*.txt")])
+    if file:
+        text = file.read()
+        text_box.delete(1.0, tk.END)
+        text_box.insert(1.0, text)
+        browse_text.set("Browse")
+
+def get_indexes(text):
+    chars = list(set(text))
+    indexes = []
+    for char in chars:
+        indexes.append([i for i, c in enumerate(text) if c == char])
+    return chars, indexes
+
+def get_text_from_symbol_and_index_arrays(symbols, indexes):
+    result = ['' for _ in range(max(chain.from_iterable(indexes)) + 1)]
+    for symbol, symbol_indexes in zip(symbols, indexes):
+        for index in symbol_indexes:
+            result[index] = symbol
+    return ''.join(result)
+
+def save_sequence_numbers():
+    text = text_box.get(1.0, tk.END).strip()
+    symbols, indexes = get_indexes(text)
+    JackBack = str([ord(xxx) for xxx in symbols] + [(max(indexes)[0]) + 1] + indexes).replace('], [', ', ' + str((max(indexes)[0]) + 1) + ", ")
+    JackBack = "[" + str(JackBack[1:len(JackBack) - 1]).replace("[", "").replace("]", "") + "]"
+    BackJack = literal_eval("[" + JackBack.replace(str((max(indexes)[0]) + 1), "], [").replace(", ], [, ","], [").replace(", [], [,","], [").replace("]], [ ","], [") + "]")
+    BackJackSymbols = [chr(xxxx) for xxxx in BackJack[0]]
+    sequence_numbers = get_text_from_symbol_and_index_arrays(BackJackSymbols, BackJack[1:])
+
+    with asksaveasfile(mode='w', defaultextension=".txt", filetypes=[("Text file", "*.txt")], initialfile="SequenceNumbers.txt") as file:
+        if file:
+            file.write(sequence_numbers)
+
+def create_geometric_shape(numbers):
+    num_segments = len(numbers)
+    angles = np.linspace(0, 2 * np.pi, num_segments + 1)[:-1]
+    radii = np.array(numbers) * 10
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, polar=True)
+
+    for i in range(num_segments):
+        ax.plot([angles[i], angles[i]], [0, radii[i]], label=str(numbers[i]))
+
+    r = radii[-1] / 2
+    theta = angles[-1] + np.pi / 2
+
+    plt.legend()
+    plt.savefig("generated_key.png", bbox_inches='tight', pad_inches=0.0)
+    plt.close(fig)
+
+    return r, theta
+
+def get_numbers_from_geometric_shape(r, theta, fig):
+    img = plt.imread("generated_key.png")
+    fig, ax = plt.subplots()
+    ax.imshow(img)
+    ax.axis('off')
+
+    lines = ax.get_lines()
+
+    numbers = []
+    for line in lines:
+        label = line.get_label()
+        if label:
+            numbers.append(int(label))
+
+    return numbers
+
+def generate_key():
+    sequence_numbers = text_box.get(1.0, tk.END).strip()
+    numbers = [ord(x) for x in sequence_numbers]
+    r, theta, fig = create_geometric_shape(numbers)
+    with asksaveasfile(mode='w', defaultextension=".txt", filetypes=[("Text file", "*.txt")], initialfile="GeneratedKey.txt") as file:
+        if file:
+            file.write(f"r: {r}\ntheta: {theta}\nfig: {fig}")
+
+def generate_text():
+    key_file = askopenfile(parent=root, mode='r', title="Choose a key file", filetypes=[("Text file", "*.txt")])
+    if key_file:
+        lines = key_file.readlines()
+        r, theta = map(float, (lines[0].strip().split(': ')[1], lines[1].strip().split(': ')[1]))
+        numbers = get_numbers_from_geometric_shape(r, theta, None)
+        generated_text = get_text_from_symbol_and_index_arrays([chr(x) for x in numbers], ([i] for i, _ in enumerate(numbers)))
+        with asksaveasfile(mode='w', defaultextension=".txt", filetypes=[("Text file", "*.txt")], initialfile="GeneratedText.txt") as file:
+            if file:
+                file.write(generated_text)
+
+# browse button
+browse_text = tk.StringVar()
+browse_btn = tk.Button(root, textvariable=browse_text, command=lambda: open_file(), font="Raleway", bg="#20bebe", fg="white", height=2, width=15)
+browse_text.set("Browse")
+browse_btn.grid(column=1, row=2, padx=10, pady=10, sticky=tk.N + tk.S + tk.E + tk.W)
+
+# save sequence numbers button
+save_btn = tk.Button(root, text="Save Sequence Numbers", command=lambda: save_sequence_numbers(), font="Raleway", bg="#20bebe", fg="white", height=2, width=20)
+save_btn.grid(column=1, row=3, padx=10, pady=10, sticky=tk.N + tk.S + tk.E + tk.W)
+
+# generate key button
+generate_key_btn = tk.Button(root, text="Generate Key", command=lambda: generate_key(), font="Raleway", bg="#20bebe", fg="white", height=2, width=20)
+generate_key_btn.grid(column=1, row=4, padx=10, pady=10, sticky=tk.N + tk.S + tk.E + tk.W)
+
+# generate text button
+generate_text_btn = tk.Button(root, text="Generate Text", command=lambda: generate_text(), font="Raleway", bg="#20bebe", fg="white", height=2, width=20)
+generate_text_btn.grid(column=1, row=5, padx=10, pady=10, sticky=tk.N + tk.S + tk.E + tk.W)
+
+# text box
+text_box = tk.Text(root, height=10, width=50, padx=15, pady=15)
+text_box.grid(column=1, row=6, padx=10, pady=10, sticky=tk.N + tk.S + tk.E + tk.W)
+
+root.mainloop()
