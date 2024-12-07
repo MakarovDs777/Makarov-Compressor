@@ -261,10 +261,10 @@ def get_numbers_from_geometric_shape(r, theta, fig):
 def generate_key():
     sequence_numbers = text_box.get(1.0, tk.END).strip()
     numbers = [ord(x) for x in sequence_numbers]
-    r, theta = create_geometric_shape(numbers)
+    r, theta, fig = create_geometric_shape(numbers)
     with asksaveasfile(mode='w', defaultextension=".txt", filetypes=[("Text file", "*.txt")], initialfile="GeneratedKey.txt") as file:
         if file:
-            file.write("r: {}\ntheta: {}".format(r, theta))
+            file.write(f"r: {r}\ntheta: {theta}\nfig: {fig}")
 
 def generate_text():
     key_file = askopenfile(parent=root, mode='r', title="Choose a key file", filetypes=[("Text file", "*.txt")])
