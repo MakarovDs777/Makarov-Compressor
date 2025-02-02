@@ -8,7 +8,7 @@ JackBack = "[32, 50, 112, 51, 77, 114, 105, 98, 111, 110, 116, 48, 115, 46, 107,
 JackBackList = literal_eval(JackBack)
 
 # Найдем максимальный индекс, который будет служить маркером
-sdf = 164  # Например, как в ваших данных, замените на max(JackBackList)
+sdf = max(JackBackList)-10   # Например, как в ваших данных, замените на max(JackBackList)
 
 # Преобразуем JackBackList в строку и разделим по sdf
 JackBack_str = str(JackBackList)
